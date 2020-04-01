@@ -3,49 +3,52 @@ public class Playground {
     public static void main(String[] args) {
         
         //Création des joueurs
-        Player player1 = new Player("Player 1");
-        Player player2 = new Player("Player 2");
+        Player player1 = new Player(UserInterface.askName());
+        Player player2 = new Player(UserInterface.askName());
+
+        //Affichage des règles
+        boolean hasWant= UserInterface.askWantRules();
+        if (hasWant) UserInterface.printRules();
 
         //Tour du joueurs 1
+        Playground.playerTurn(player1);
+
+        //Tour du joueurs 2
+        Playground.playerTurn(player2);
+
+        //Qui a gagné ?
+        Playground.whoWon(player1, player2);
+        
+    }
+
+    public static void playerTurn(Player player) {
+        
         int diceRoll1 = 0;
         int diceRoll2 = 0;
         int sumOfDice = 0;
         boolean wantContinue = false;
 
+        UserInterface.yourTurn(player);
         do {
-            UserInterface.sayPressKey();
-            diceRoll1 = player1.diceRoll();
-            diceRoll2 = player1.diceRoll();
+            if (!wantContinue) UserInterface.sayPressKey();
+            diceRoll1 = player.diceRoll();
+            diceRoll2 = player.diceRoll();
+            UserInterface.printDice(diceRoll1, diceRoll2);
+            System.out.println();
             sumOfDice = diceRoll1 + diceRoll2;
-            UserInterface.sayResult(diceRoll1, diceRoll2);
             if (sumOfDice == 7) {
-                player1.setScore(0);
-                UserInterface.sayCurrentScore(player1);
+                player.setScore(0);
+                UserInterface.sayCurrentScore(player);
             } else {
-                player1.setScore(player1.getScore() + sumOfDice);
-                UserInterface.sayCurrentScore(player1);
+                player.setScore(player.getScore() + sumOfDice);
+                UserInterface.sayCurrentScore(player);
                 wantContinue = UserInterface.askWantContinue();
             }
-        } while (player1.getScore() != 0 && wantContinue);
+        } while (player.getScore() != 0 && wantContinue);
+    }
 
-        //Tour du joueurs 2
-        do {
-            UserInterface.sayPressKey();
-            diceRoll1 = player2.diceRoll();
-            diceRoll2 = player2.diceRoll();
-            sumOfDice = diceRoll1 + diceRoll2;
-            UserInterface.sayResult(diceRoll1, diceRoll2);
-            if (sumOfDice == 7) {
-                player2.setScore(0);
-                UserInterface.sayCurrentScore(player2);
-            } else {
-                player2.setScore(player2.getScore() + sumOfDice);
-                UserInterface.sayCurrentScore(player2);
-                wantContinue = UserInterface.askWantContinue();
-            }
-        } while (player2.getScore() != 0 && wantContinue);
+    public static void whoWon(Player player1, Player player2) {
 
-        //Qui a gagné ?
         String winner = "";
         if (player1.getScore() < player2.getScore()) {
             winner = player2.getName();
